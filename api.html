@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Translate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #translateForm {
+            margin-bottom: 20px;
+        }
+
+        #translationResult {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Translate</h1>
+
+    <form id="translateForm">
+        <label for="textToTranslate">Enter Text to Translate:</label>
+        <input type="text" id="textToTranslate" required>
+        <label for="targetLanguage">Select Target Language:</label>
+        <select id="targetLanguage" required>
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <!-- Add more language options as needed -->
+        </select>
+        <button type="button" onclick="translateText()">Translate</button>
+    </form>
+
+    <div id="translationResult">
+        <h2>Translation Result:</h2>
+        <p id="translatedText"></p>
+    </div>
+
+    <script>
+        function translateText() {
+            const apiKey = 'YOUR_GOOGLE_TRANSLATE_API_KEY'; // Replace with your actual Google Translate API key
+            const textToTranslate = document.getElementById('textToTranslate').value;
+            const targetLanguage = document.getElementById('targetLanguage').value;
+            const apiUrl = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    q: textToTranslate,
+                    target: targetLanguage,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.data && data.data.translations && data.data.translations.length > 0) {
+                    displayTranslation(data.data.translations[0].translatedText);
+                } else {
+                    alert('Translation failed. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error translating text:', error));
+        }
+
+        function displayTranslation(translation) {
+            const translationResultDiv = document.getElementById('translationResult');
+            document.getElementById('translatedText').textContent = translation;
+
+            // Display the translation result div
+            translationResultDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
